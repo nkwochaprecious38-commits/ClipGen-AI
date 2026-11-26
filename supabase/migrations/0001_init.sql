@@ -60,7 +60,7 @@ create table if not exists user_settings (
 create table if not exists projects (
   id uuid primary key default gen_random_uuid(),
   workspace_id uuid not null references workspaces(id) on delete cascade,
-  owner_id uuid not null references auth.users(id),
+  owner_id uuid not null references auth.users(id) on delete cascade,
   title text not null,
   description text not null default '',
   cover_asset_id uuid,
@@ -83,7 +83,7 @@ create index if not exists idx_folders_ws on media_folders(workspace_id);
 create table if not exists assets (
   id uuid primary key default gen_random_uuid(),
   workspace_id uuid not null references workspaces(id) on delete cascade,
-  uploaded_by uuid references auth.users(id),
+  uploaded_by uuid references auth.users(id) on delete set null,
   project_id uuid references projects(id) on delete set null,
   folder_id uuid references media_folders(id) on delete set null,
   kind text not null check (kind in ('video','image','audio','other')),
@@ -110,7 +110,7 @@ create or replace view images with (security_invoker = true) as select * from as
 create table if not exists generations (
   id uuid primary key default gen_random_uuid(),
   workspace_id uuid not null references workspaces(id) on delete cascade,
-  user_id uuid not null references auth.users(id),
+  user_id uuid not null references auth.users(id) on delete cascade,
   project_id uuid references projects(id) on delete set null,
   type text not null check (type in ('text_to_video','image_to_video','video_to_video','video_edit','image','video_extension','upscale','multi_scene','variation','social')),
   model_id text not null,
@@ -148,7 +148,7 @@ create index if not exists idx_jobs_gen on generation_jobs(generation_id);
 create table if not exists prompts (
   id uuid primary key default gen_random_uuid(),
   workspace_id uuid not null references workspaces(id) on delete cascade,
-  user_id uuid not null references auth.users(id),
+  user_id uuid not null references auth.users(id) on delete cascade,
   project_id uuid references projects(id) on delete set null,
   title text not null,
   body text not null,
@@ -211,7 +211,7 @@ create table if not exists exports (
   format text not null,
   resolution text,
   status text not null default 'completed',
-  created_by uuid references auth.users(id),
+  created_by uuid references auth.users(id) on delete set null,
   created_at timestamptz not null default now()
 );
 
@@ -232,7 +232,7 @@ create table if not exists activity_logs (
   id uuid primary key default gen_random_uuid(),
   workspace_id uuid not null references workspaces(id) on delete cascade,
   project_id uuid references projects(id) on delete cascade,
-  user_id uuid references auth.users(id),
+  user_id uuid references auth.users(id) on delete set null,
   action text not null,
   detail text not null default '',
   created_at timestamptz not null default now()
@@ -264,7 +264,7 @@ create table if not exists credit_balances (
 create table if not exists credit_transactions (
   id uuid primary key default gen_random_uuid(),
   workspace_id uuid not null references workspaces(id) on delete cascade,
-  user_id uuid references auth.users(id),
+  user_id uuid references auth.users(id) on delete set null,
   generation_id uuid references generations(id) on delete set null,
   project_id uuid references projects(id) on delete set null,
   kind text not null check (kind in ('grant','reserve','refund','adjustment')),
