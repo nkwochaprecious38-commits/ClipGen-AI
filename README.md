@@ -21,3 +21,8 @@ Integration required (interface built, nothing is simulated): video to video, AI
 Pricing: only the prices ($47, $57, $97 per month) come from Selar. Plan names, credits, storage and limits are marked to be confirmed
 in `src/lib/plans.ts`. Payment happens on Selar. Activating a subscription after payment is not automated (no webhook yet).
 Model capabilities in `src/lib/models.ts` must be verified against the provider docs before launch.
+
+## API access without exposing the schema
+If the `clipgen` schema cannot be added to Exposed schemas, run `supabase/migrations/0002_public_api.sql` as well.
+The app always reaches data through `clipgen_` prefixed views and functions in `public` (see `src/lib/supabase/wrap.ts`).
+Those views are `security_invoker`, so row level security still applies per user.

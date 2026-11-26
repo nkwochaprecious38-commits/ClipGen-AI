@@ -6,7 +6,7 @@ export const metadata = { title: 'Multi Scene Video' };
 const STEPS = ['Define the concept', 'Plan scenes and prompts', 'Generate each scene clip', 'Review and regenerate', 'Arrange scenes in order', 'Preview the sequence'];
 export default async function MultiScene() {
   const ctx = await getContext();
-  const { data: boards } = await ctx.supabase.from('storyboards').select('id, title, status, scenes(id)').order('updated_at', { ascending: false });
+  const { data: boards } = await ctx.supabase.from('storyboards').select('id, title, status, scenes:clipgen_scenes(id)').order('updated_at', { ascending: false });
   const { data: projects } = await ctx.supabase.from('projects').select('id, title');
   return (
     <>

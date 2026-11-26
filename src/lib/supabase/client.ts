@@ -1,4 +1,4 @@
 import { createBrowserClient } from '@supabase/ssr';
 export function createClient() {
-  return createBrowserClient<any, 'clipgen'>(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, { db: { schema: 'clipgen' } });
+  return createBrowserClient<any, 'public'>(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
 }

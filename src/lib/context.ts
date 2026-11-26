@@ -8,12 +8,12 @@ export async function getContext() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
-  const { data: member } = await supabase.from('workspace_members').select('workspace_id, workspaces(name)').eq('user_id', user.id).order('created_at').limit(1).maybeSingle();
+  const { data: member } = await supabase.from('workspace_members').select('workspace_id, workspaces:clipgen_workspaces(name)').eq('user_id', user.id).order('created_at').limit(1).maybeSingle();
   if (!member) {
     // Account exists (for example created elsewhere in this Supabase project) but has no ClipGen workspace yet.
     const { error } = await supabase.rpc('ensure_workspace');
     if (!error) {
-      const { data: again } = await supabase.from('workspace_members').select('workspace_id, workspaces(name)').eq('user_id', user.id).limit(1).maybeSingle();
+      const { data: again } = await supabase.from('workspace_members').select('workspace_id, workspaces:clipgen_workspaces(name)').eq('user_id', user.id).limit(1).maybeSingle();
       if (again) { const w: any = again.workspaces; return { supabase, user, workspaceId: again.workspace_id as string, workspaceName: (Array.isArray(w) ? w[0]?.name : w?.name) as string }; }
     }
     return { supabase, user, workspaceId: null as string | null, workspaceName: '' };

@@ -7,7 +7,7 @@ export const metadata = { title: 'Exports' };
 export default async function Exports() {
   const ctx = await getContext(); const sb = ctx.supabase;
   const [{ data: exps }, { data: assets }] = await Promise.all([
-    sb.from('exports').select('id, format, created_at, assets(name, storage_path), projects(title)').order('created_at', { ascending: false }),
+    sb.from('exports').select('id, format, created_at, assets:clipgen_assets(name, storage_path), projects:clipgen_projects(title)').order('created_at', { ascending: false }),
     sb.from('assets').select('id, name, kind').in('kind', ['video', 'image']).order('created_at', { ascending: false }).limit(100),
   ]);
   const urls = await signedUrls(ctx, (exps ?? []).map((e: any) => (Array.isArray(e.assets) ? e.assets[0] : e.assets)?.storage_path).filter(Boolean));

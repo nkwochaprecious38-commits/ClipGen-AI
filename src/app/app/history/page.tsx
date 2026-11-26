@@ -12,7 +12,7 @@ const route = (t: string) => ({ image: '/app/images', image_to_video: '/app/imag
 
 export default async function History({ searchParams }: { searchParams: Promise<{ q?: string; type?: string; status?: string }> }) {
   const sp = await searchParams; const ctx = await getContext();
-  let q = ctx.supabase.from('generations').select('*, projects(title)').order('created_at', { ascending: false }).limit(100);
+  let q = ctx.supabase.from('generations').select('*, projects:clipgen_projects(title)').order('created_at', { ascending: false }).limit(100);
   if (sp.type && TYPES.includes(sp.type)) q = q.eq('type', sp.type); if (sp.status && STATUSES.includes(sp.status)) q = q.eq('status', sp.status);
   if (sp.q) q = q.ilike('prompt', `%${sp.q.replace(/[%,]/g, '')}%`);
   const [{ data: gens }, { data: projects }] = await Promise.all([q, ctx.supabase.from('projects').select('id, title')]);

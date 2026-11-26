@@ -19,7 +19,7 @@ export default async function Project({ params, searchParams }: { params: Promis
   const { data: boards } = tab === 'storyboard' ? await sb.from('storyboards').select('*').eq('project_id', id) : { data: [] as any[] };
   const { data: assets } = tab === 'assets' ? await sb.from('assets').select('*').eq('project_id', id).order('created_at', { ascending: false }) : { data: [] as any[] };
   const { data: prompts } = tab === 'prompts' ? await sb.from('prompts').select('*').eq('project_id', id) : { data: [] as any[] };
-  const { data: exps } = tab === 'exports' ? await sb.from('exports').select('*, assets(name)').eq('project_id', id).order('created_at', { ascending: false }) : { data: [] as any[] };
+  const { data: exps } = tab === 'exports' ? await sb.from('exports').select('*, assets:clipgen_assets(name)').eq('project_id', id).order('created_at', { ascending: false }) : { data: [] as any[] };
   const { data: acts } = tab === 'activity' ? await sb.from('activity_logs').select('*').eq('project_id', id).order('created_at', { ascending: false }).limit(50) : { data: [] as any[] };
   const urls = await signedUrls(ctx, (assets ?? []).map((a: any) => a.storage_path));
   return (
